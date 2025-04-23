@@ -3,75 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Single Page Static Site</title>
+  <title>Static Web Hosting on AWS</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
+      margin: 2rem;
+      background-color: #f9f9f9;
+      color: #333;
     }
     header {
-      background: #333;
-      color: #fff;
-      padding: 1rem;
-    }
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 1rem;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-    }
-    .hero {
-      padding: 2rem;
-      background: #f4f4f4;
       text-align: center;
+      margin-bottom: 2rem;
     }
-    #about {
-      padding: 2rem;
+    h1 {
+      font-size: 2.5rem;
+      color: #2c3e50;
+    }
+    article {
+      max-width: 800px;
+      margin: auto;
+      line-height: 1.6;
+    }
+    h2 {
+      margin-top: 2rem;
+      color: #2980b9;
+    }
+    code {
+      background: #eee;
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-family: monospace;
     }
     footer {
       text-align: center;
-      padding: 1rem;
-      background: #333;
-      color: white;
+      margin-top: 3rem;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
   <header>
-    <nav>
-      <h1>MySite</h1>
-      <ul>
-        <li><a href="#about">About</a></li>
-      </ul>
-    </nav>
+    <h1>Static Web Hosting on AWS Using GitHub Actions</h1>
+    <p><em>Automate your deployments the smart way.</em></p>
   </header>
 
-  <section class="hero">
-    <h2>Welcome to My Static Site</h2>
-    <p>All-in-one HTML for fast, free hosting!</p>
-  </section>
+  <article>
+    <h2>Introduction</h2>
+    <p>This post walks you through hosting static websites on AWS S3 and using GitHub Actions to automate deployments.</p>
 
-  <section id="about">
-    <h3>About This Site</h3>
-    <p>This single HTML file includes HTML, CSS, and JavaScript for easy deployment.</p>
-  </section>
+    <h2>Step 1: Prepare Your Static Website</h2>
+    <p>Build your website using only HTML, CSS, and optionally JS. Place your files in a folder (e.g., <code>dist/</code>).</p>
+
+    <h2>Step 2: Setup AWS S3 Bucket</h2>
+    <ul>
+      <li>Go to AWS Console → S3 → Create Bucket.</li>
+      <li>Enable static website hosting and note down the endpoint.</li>
+    </ul>
+
+    <h2>Step 3: Add AWS Credentials to GitHub Secrets</h2>
+    <ul>
+      <li>Generate AWS IAM access keys.</li>
+      <li>Add <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> to GitHub repo → Settings → Secrets.</li>
+    </ul>
+
+    <h2>Step 4: Create GitHub Actions Workflow</h2>
+    <p>Create <code>.github/workflows/deploy.yml</code>:</p>
+    <pre><code>name: Deploy to S3
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --delete
+        env:
+          AWS_S3_BUCKET: your-bucket-name
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          SOURCE_DIR: 'dist'</code></pre>
+
+    <h2>Conclusion</h2>
+    <p>Using GitHub Actions ensures that every push to main deploys your site automatically. Fast and reliable!</p>
+  </article>
 
   <footer>
-    <p>© 2025 My Static Site</p>
+    <p>© 2025 Your Blog Name</p>
   </footer>
-
-  <script>
-    console.log('Hello from inline JavaScript!');
-  </script>
 </body>
 </html>
